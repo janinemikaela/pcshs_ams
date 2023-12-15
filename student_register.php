@@ -137,12 +137,12 @@ if (isset($_POST['register_btn'])) {
                       <div class="col-12">
                       </div>
                       <div class="col-4">
-                        <label><b>Last Name</label></b>
+                        <label><b>Last Name*</label></b>
                         <input type="text" name="last_name" class="form-control" id="last_name" placeholder="Dela Cruz" required pattern="[A-Za-z\s]+" style="text-transform: capitalize;" autocomplete="off" title="It should not contain special characters and numbers.">
                         <div class="invalid-feedback">Please, enter your Last Name!</div>
                       </div>
                       <div class="col-4">
-                        <label><b>First Name</label></b>
+                        <label><b>First Name*</label></b>
                         <input type="text" name="first_name" class="form-control" id="first_name" placeholder="Juan" required pattern="[A-Za-z\s]+" style="text-transform: capitalize;" autocomplete="off" title="It should not contain special characters and numbers.">
                         <div class="invalid-feedback">Please, enter your First Name!</div>
                       </div>
@@ -154,13 +154,13 @@ if (isset($_POST['register_btn'])) {
                     </div>
 
                     <div class="col-lg-6">
-                      <label><b>Birthday</label></b>
+                      <label><b>Birthday*</label></b>
                       <input type="date" name="birthday" class="form-control" placeholder="Birthday" id="birthday" required>
                       <div class="invalid-feedback">Please enter your birthday!</div>
                     </div>
 
                     <div class="col-lg-6">
-                      <label><b>Sex</label></b>
+                      <label><b>Sex*</label></b>
                       <select name="sex" class="form-select" id="sex" required>
                         <option value="" disabled selected>Select</option>
                         <option value="Male">Male</option>
@@ -170,13 +170,13 @@ if (isset($_POST['register_btn'])) {
                     </div>
 
                     <div class="col-4">
-                      <label><b>Student ID</label></b>
+                      <label><b>Student ID*</label></b>
                       <input type="text" name="student_id" class="form-control" placeholder="XXX-XXXXXXX-XXXX" id="student_id" pattern="^\d{3}-student-\d{4}$" required title="Please enter a valid Student ID in the format: 001-student-2023" autocomplete="off" maxlength="16">
                       <div class="invalid-feedback">Please enter a valid Student ID!</div>
                     </div>
 
                     <div class="col-4">
-                      <label><b>Password</label></b>
+                      <label><b>Password*</label></b>
                       <div class="input-group">
                         <input type="password" name="password" class="form-control" id="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*_?&])[A-Za-z\d@$!%*_?&]{10}$" title="Password must be exactly 10 characters long, contain one uppercase, one lowercase, a special character, and a number" required>
                         <button class="btn btn-outline-secondary" type="button" id="togglePassword"><i class="bi bi-eye"></i></button>
@@ -185,7 +185,7 @@ if (isset($_POST['register_btn'])) {
                     </div>
 
                     <div class="col-4">
-                      <label><b>Confirm Password</label></b>
+                      <label><b>ConfirmPassword*</label></b>
                       <div class="input-group">
                         <input type="password" name="con_password" class="form-control" id="con_password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*_?&])[A-Za-z\d@$!%*_?&]{10}$" title="Password must be exactly 10 characters long, contain one uppercase, one lowercase, a special character, and a number" required>
                         <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword"><i class="bi bi-eye"></i></button>

@@ -68,6 +68,10 @@
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet">
 
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
   </head>
 
   <body>
@@ -98,53 +102,100 @@
         </li><!-- End Dashboard Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-            <i class="bi bi-menu-button-wide"></i><span>Students</span><i class="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-            <li>
-              <a href="admin_students.php">
-                <i class="bi bi-circle"></i><span>All students</span>
-              </a>
+        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-menu-button-wide"></i><span>Students</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="admin_students.php">
+              <i class="bi bi-circle"></i><span>All students</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_archimedes.php">
+              <i class="bi bi-circle"></i><span>11 - Archimedes</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_bernoulli.php">
+              <i class="bi bi-circle"></i><span>11 -  Bernoulli</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_curie.php">
+              <i class="bi bi-circle"></i><span>11 - Curie</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_descartes.php">
+              <i class="bi bi-circle"></i><span>11 - Descartes</span>
+            </a>
             </li>
-            <li>
-              <a href="11_archimedes.php">
-                <i class="bi bi-circle"></i><span>11 - Archimedes</span>
-              </a>
-            </li>
-            <li>
-              <a href="11_bernoulli.php">
-                <i class="bi bi-circle"></i><span>11 -  Bernoulli</span>
-              </a>
-            </li>
-            <li>
-              <a href="11_curie.php">
-                <i class="bi bi-circle"></i><span>11 - Curie</span>
-              </a>
-            </li>
-            <li>
-              <a href="12_alcala.php">
-                <i class="bi bi-circle"></i><span>12 - Alcala</span>
-              </a>
-            </li>
-            <li>
-              <a href="12_del_mundo.php">
-                <i class="bi bi-circle"></i><span>12 - Del Mundo</span>
-              </a>
-            </li>
-            <li>
-              <a href="12_zara.php">
-                <i class="bi bi-circle"></i><span>12 - Zara</span>
-              </a>
-            </li>
-          </ul>
-        </li><!-- End Students Nav -->
+          <li>
+            <a href="12_alcala.php">
+              <i class="bi bi-circle"></i><span>12 - Alcala</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_del_mundo.php">
+              <i class="bi bi-circle"></i><span>12 - Del Mundo</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_zara.php">
+              <i class="bi bi-circle"></i><span>12 - Zara</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Students Nav -->
 
-        <li class="nav-item">
-          <a class="nav-link" data-bs-target="#forms-nav" href="admin_subjects.php">
-            <i class="bi bi-journal-text"></i><span>Subjects</span>
-          </a>
-        </li><!-- End Subjects Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-menu-button-wide"></i><span>Report Card</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="11_stem_1.php">
+              <i class="bi bi-circle"></i><span>11 - STEM (1st Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_stem_2.php">
+              <i class="bi bi-circle"></i><span>11 - STEM (2nd Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_abm_1.php">
+              <i class="bi bi-circle"></i><span>11 -  ABM (1st Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_abm_2.php">
+              <i class="bi bi-circle"></i><span>11 -  ABM (2nd Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_stem_1.php">
+              <i class="bi bi-circle"></i><span>12 - STEM (1st Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_stem_2.php">
+              <i class="bi bi-circle"></i><span>12 - STEM (2nd Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_abm_1.php">
+              <i class="bi bi-circle"></i><span>12 -  ABM (1st Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_abm_2.php">
+              <i class="bi bi-circle"></i><span>12 -  ABM (2st Sem)</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Section Nav -->
 
         <li class="nav-item">
           <a class="nav-link" data-bs-target="#icons-nav" href="admin_teachers.php">
@@ -172,7 +223,7 @@
                                       <div class="pt-4 pb-2">
                                           <h5 class="card-title">List of Teachers</h5>
                                       </div>
-                                      <table class="table datatable">
+                                      <table class="table" id="studentsTable">
                                           <thead>
                                               <tr>
                                                   <th scope="col">#</th>
@@ -199,7 +250,7 @@
                                               echo "<td>
                                                 <form method='post' action='admin_teachers.php'>
                                                 <input type='hidden' name='delete_id' value='" . $row['employee_id'] . "'>
-                                                <button type='submit' class='btn btn-danger' name='delete_btn'>Delete</button>
+                                                <button type='submit' class='bi bi-trash-fill' name='delete_btn'></button>
                                                 </form>
                                               </td>";
 
@@ -218,20 +269,6 @@
           </div>
       </main><!-- End #main --> 
 
-    <!-- ======= Footer ======= -->
-    <footer id="footer" class="footer">
-      <div class="copyright">
-        &copy; Copyright <strong><span>PCSHS</span></strong>. All Rights Reserved
-      </div>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-      </div>
-    </footer><!-- End Footer -->
-
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
@@ -246,6 +283,12 @@
 
     <!-- Template Main JS File -->
     <script src="assets/js/main.js"></script>
+
+    <script>
+     $(document).ready(function() {
+        $('#studentsTable').DataTable();
+        });
+    </script>
 
   </body>
 

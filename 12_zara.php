@@ -3,7 +3,7 @@
 require_once("connect.php");
 
 // Fetch data from the database
-$result = mysqli_query($mysqli, "SELECT * FROM section_12_zara");
+$result = mysqli_query($mysqli, "SELECT * FROM 12_zara");
 
 // HTML starts here
 ?>
@@ -38,6 +38,10 @@ $result = mysqli_query($mysqli, "SELECT * FROM section_12_zara");
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 
 </head>
 
@@ -94,6 +98,11 @@ $result = mysqli_query($mysqli, "SELECT * FROM section_12_zara");
             </a>
           </li>
           <li>
+            <a href="11_descartes.php">
+              <i class="bi bi-circle"></i><span>11 - Descartes</span>
+            </a>
+            </li>
+          <li>
             <a href="12_alcala.php">
               <i class="bi bi-circle"></i><span>12 - Alcala</span>
             </a>
@@ -111,11 +120,53 @@ $result = mysqli_query($mysqli, "SELECT * FROM section_12_zara");
         </ul>
       </li><!-- End Students Nav -->
 
-        <li class="nav-item">
-          <a class="nav-link" data-bs-target="#forms-nav" href="admin_subjects.php">
-            <i class="bi bi-journal-text"></i><span>Subjects</span>
-          </a>
-        </li><!-- End Subjects Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-menu-button-wide"></i><span>Report Card</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="11_stem_1.php">
+              <i class="bi bi-circle"></i><span>11 - STEM (1st Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_stem_2.php">
+              <i class="bi bi-circle"></i><span>11 - STEM (2nd Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_abm_1.php">
+              <i class="bi bi-circle"></i><span>11 -  ABM (1st Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_abm_2.php">
+              <i class="bi bi-circle"></i><span>11 -  ABM (2nd Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_stem_1.php">
+              <i class="bi bi-circle"></i><span>12 - STEM (1st Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_stem_2.php">
+              <i class="bi bi-circle"></i><span>12 - STEM (2nd Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_abm_1.php">
+              <i class="bi bi-circle"></i><span>12 -  ABM (1st Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_abm_2.php">
+              <i class="bi bi-circle"></i><span>12 -  ABM (2st Sem)</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Section Nav -->
 
         <li class="nav-item">
           <a class="nav-link" data-bs-target="#icons-nav" href="admin_teachers.php">
@@ -144,37 +195,46 @@ $result = mysqli_query($mysqli, "SELECT * FROM section_12_zara");
                   <div class="pt-4 pb-2">
                     <h5 class="card-title">12 - Zara</h5>
                   </div>
-                  <table class="table datatable">
-                    <thead>
-                      <tr class="year-2021">
-                        <th scope="col">#</th>
-                        <th scope="col">Student ID</th>
-                        <th scope="col">Name of Student</th>
-                        <th scope="col">Attendance</th>
-                        <th scope="col">Grades</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php
-                      // Initialize the counter
-                      $count = 1;
+                  <table class="table" id="studentsTable">
+                                        <thead>
+                                            <tr class="year-2021">
+                                                <th scope="col">#</th>
+                                                <th scope="col">Student ID</th>
+                                                <th scope="col">Name of Student</th>
+                                                <th scope="col">Contact no.</th>
+                                                <th scope="col">Birthday</th>
+                                                <th scope="col">Sex</th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            // Initialize the counter
+                                            $count = 1;
 
-                      // Loop through the data and display it in the table
-                      while ($row = mysqli_fetch_assoc($result)) {
-                        echo "<tr>";
-                        echo "<th scope='row'>" . $count . "</th>";
-                        echo "<td>" . $row['student_id'] . "</td>";
-                        echo "<td>" . $row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name'] . "</td>";
-                        echo "<td>" . $row['attendance'] . "</td>";
-                        echo "<td><button onclick=\"showGrades(" . $row['student_id'] . ")\">Upload</button></td>";
-                        echo "</tr>";
+                                            // Loop through the data and display it in the table
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                echo "<tr>";
+                                                echo "<th scope='row'>" . $count . "</th>";
+                                                echo "<td>" . $row['student_id'] . "</td>";
+                                                echo "<td>" . $row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name'] . "</td>";
+                                                echo "<td>" . $row['contact_no'] . "</td>";
+                                                echo "<td>" . $row['birthday'] . "</td>";
+                                                echo "<td>" . $row['sex'] . "</td>";
+                                                echo "<td>
+                                                        <form method='post' action=''>
+                                                            <input type='hidden' name='delete_id' value='{$row['student_id']}'>
+                                                            <button type='submit' class='bi bi-trash-fill' name='delete_btn'></button>
+                                                        </form>
+                                                      </td>";
+                                                echo "</tr>";
 
-                        // Increment the counter
-                        $count++;
-                      }
-                      ?>
-                    </tbody>
-                  </table>
+                                                // Increment the counter
+                                                $count++;
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
                   <!-- End Table with stripped rows -->
                 </div>
               </div>
@@ -200,6 +260,10 @@ $result = mysqli_query($mysqli, "SELECT * FROM section_12_zara");
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
 
+  <script>
+    $(document).ready(function() {
+      $('#studentsTable').DataTable();
+    });
   </script>
 
 </body>

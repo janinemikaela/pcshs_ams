@@ -86,7 +86,7 @@
                     </center>
                     
                     <div class="col-12">
-                      <a href="reset_pass.php"><u>Reset Password</a></u>
+                      <a href="forgot_pass.php"><u>Reset Password</a></u>
                     </div>
                   </form>
 

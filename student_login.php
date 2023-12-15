@@ -91,7 +91,8 @@ if($db)
                   <form  method="post" action="student_login.php" class="row g-3 needs-validation" novalidate>
 
                     <div class="col-12">
-                      <input type="text" name="student_id" class="form-control" placeholder="Student ID" id="student_id" pattern="^\d{3}-student-\d{4}$" required title="Please enter a valid Employee ID in the format: 001-student-2023" autocomplete="off" maxlength="16">
+                      <label><b>Student ID</label></b>
+                      <input type="text" name="student_id" class="form-control" placeholder="XXX-XXXXXXX-XXXX" id="student_id" pattern="^\d{3}-student-\d{4}$" required title="Please enter a valid Employee ID in the format: 001-student-2023" autocomplete="off" maxlength="16">
                       <div class="invalid-feedback">Please enter a valid Student ID!</div>
                     </div>
 
@@ -113,7 +114,7 @@ if($db)
 
                     <center>
                     <div class="col-12">
-                      <a href="reset_pass.php"><u>Reset Password</a></u>
+                      <a href="forgot_pass.php"><u>Reset Password</a></u>
                     </div>
                     </center>
 

@@ -110,6 +110,13 @@ if (isset($_SESSION["student_id"])) {
       </li><!-- End QR Code Nav -->
 
       <li class="nav-item">
+        <a class="nav-link" data-bs-target="#icons-nav" href="student_change_pass.php">
+          <i class="bi bi-gem"></i><span>Change Password</span>
+        </a>
+      </li><!-- End Change Password Nav -->
+
+
+      <li class="nav-item">
         <a class="nav-link" data-bs-target="#forms-nav" href="student_logout.php">
           <i class="bi bi-journal-text"></i><span>Logout</span>
         </a>
@@ -140,47 +147,42 @@ if (isset($_SESSION["student_id"])) {
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Generate QR Code</h5>
-                        <input type="text" id="qr-data" placeholder="Enter data">
-    <button id="generate-qr">Generate QR Code</button>
-    <div id="qrcode"></div>
 
-    <script>
-        const qrCodeDiv = document.getElementById('qrcode');
-        const qrDataInput = document.getElementById('qr-data');
-        const generateButton = document.getElementById('generate-qr');
+                      <form method="post" action="student_generate_qr.php" class="row g-3" onsubmit="return validatePassword()">
+                      <div class="col-12">
+                        <label><b>Name</label></b>
+                        <input type="text" name="last_name" class="form-control" id="last_name" placeholder="Juan Dela Cruz" required pattern="[A-Za-z\s]+" style="text-transform: capitalize;" autocomplete="off" title="It should not contain special characters and numbers.">
+                        <div class="invalid-feedback">Please, enter your Last Name!</div>
+                      </div>
 
-        // Check if there is saved QR code data in local storage.
-        const savedQRData = localStorage.getItem('savedQRData');
-
-        if (savedQRData) {
-            qrDataInput.value = savedQRData;
-            generateQRCode(savedQRData);
-            qrDataInput.disabled = true;
-            generateButton.disabled = true;
-        }
-
-        generateButton.addEventListener('click', function () {
-            const qrData = qrDataInput.value;
-            generateQRCode(qrData);
-            qrDataInput.disabled = true;
-            generateButton.disabled = true;
-        });
-
-        function generateQRCode(data) {
-            const qr = qrcode(0, 'L'); // Create a QR code instance with error correction level 'L'.
-            qr.addData(data);
-            qr.make();
-            qrCodeDiv.innerHTML = qr.createImgTag();
-
-            // Save the entered QR data to local storage for future visits.
-            localStorage.setItem('savedQRData', data);
-        }
-    </script>
+                    <div class="col-12">
+                      <label><b>Student ID</label></b>
+                      <input type="text" name="student_id" class="form-control" placeholder="XXX-XXXXXXX-XXXX" id="student_id" pattern="^\d{3}-student-\d{4}$" required title="Please enter a valid student ID in the format: 001-student-2023" autocomplete="off" maxlength="16">
+                      <div class="invalid-feedback">Please enter a valid Student ID!</div>
                     </div>
-                </div>
-              </div>
 
-              <div class="col-xxl-4 col-md-6">
+                    <div class="col-lg-12">
+                      <label><b>Birthday</label></b>
+                      <input type="date" name="birthday" class="form-control" placeholder="Birthday" id="birthday" required>
+                      <div class="invalid-feedback">Please enter your birthday!</div><br>
+                    </div>
+
+                    <div class="col-12">
+                      <div id="passwordError" class="text-danger"></div>
+                      <button class="btn btn-primary w-100" type="submit" name="register_btn">Create Account</button>
+                    </div>
+                    <div class="col-12">
+                      <p class="small mb-0">Already have an account? <a href="student_login.php">Log in</a></p>
+                    </div>
+
+                  </form>
+        </div>
+
+
+        </div>
+        
+        </div>
+      <div class="col-xxl-4 col-md-6">
                 <div class="card mt-3">
                     <div class="card-body">
                         <h5 class="card-title">QR Code</h5>
@@ -188,30 +190,9 @@ if (isset($_SESSION["student_id"])) {
                     </div>
                 </div>
             </div>
-        </div>
-        </div>
-        </div>
     </section>
-
+    </div>
   </main><!-- End #main -->
-
-  <script>
-        document.getElementById('qr-form').addEventListener('submit', function (event) {
-            event.preventDefault();
-            const name = document.getElementById('name').value;
-            const studentId = document.getElementById('student-id').value;
-            const birthday = document.getElementById('birthday').value;
-            const userData = `Name: ${name}\nStudent ID: ${studentId}\nBirthday: ${birthday}`;
-
-            if (userData) {
-                const qr = new QRious({
-                    element: document.getElementById('qr-code'),
-                    value: userData,
-                    size: 200,
-                });
-            }
-        });
-    </script>
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -228,6 +209,6 @@ if (isset($_SESSION["student_id"])) {
   <script src="assets/js/main.js"></script>
 
 </body>
-
+  
 </html>
 <?php } else {header("location:student_login.php");} ?>

@@ -75,15 +75,17 @@
                   <form class="row g-3 needs-validation" novalidate>
 
                     <div class="col-12">
-                      <div class="input-group has-validation">
-                        <span class="text" id="user_id"></span>
-                        <input type="text" name="user_id" class="form-control" placeholder="User ID" id="user_id" required>
-                        <div class="invalid-feedback">Please enter your User ID.</div>
-                      </div>
+                      <label><b>User ID</label></b>
+                      <input type="text" name="employee_id" class="form-control" placeholder="XXX-XXXXXXX-XXXX" id="employee_id" pattern="^\d{3}-faculty-\d{4}$" required title="Please enter a valid Employee ID in the format: 001-faculty-2023" autocomplete="off" maxlength="16">
+                      <div class="invalid-feedback">Please enter a valid User ID!</div>
                     </div>
 
                     <div class="col-12">
-                      <input type="password" name="password" class="form-control" placeholder="Password" id="password" required>
+                      <label><b>Password</label></b>
+                      <div class="input-group">
+                        <input type="password" name="password" class="form-control" id="password" placeholder="Password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*_?&])[A-Za-z\d@$!%*_?&]{10}$" title="Password must be exactly 10 characters long, contain one uppercase, one lowercase, a special character, and a number" required>
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword"><i class="bi bi-eye"></i></button>
+                      </div>
                       <div class="invalid-feedback">Please enter your password!</div>
                     </div>
 
@@ -94,8 +96,29 @@
                     </center>
 
                     <div class="col-12">
-                      <a href="reset_pass.php"><u>Reset Password</a></u>
+                      <a href="forgot_pass.php"><u>Reset Password</a></u>
                     </div>
+
+                    <script>
+                      const togglePassword = document.getElementById('togglePassword');
+                      const password = document.getElementById('password');
+
+                      togglePassword.addEventListener('click', function () {
+                        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                        password.setAttribute('type', type);
+                        this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+                        });
+
+                      const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+                      const confirmPassword = document.getElementById('con_password');
+
+                      toggleConfirmPassword.addEventListener('click', function () {
+                        const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                        confirmPassword.setAttribute('type', type);
+                        this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+                        });
+                    </script>
+
                   </form>
 
                 </div>

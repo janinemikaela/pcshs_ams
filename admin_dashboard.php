@@ -74,18 +74,18 @@ $attendanceCount = 4003; // Replace this with your actual query to get attendanc
   </header><!-- End Header -->
 
   <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
+    <aside id="sidebar" class="sidebar">
 
-    <ul class="sidebar-nav" id="sidebar-nav">
+      <ul class="sidebar-nav" id="sidebar-nav">
 
-      <li class="nav-item">
-        <a class="nav-link " href="admin_dashboard.php">
-          <i class="bi bi-grid"></i>
-          <span>Dashboard</span>
-        </a>
-      </li><!-- End Dashboard Nav -->
+        <li class="nav-item">
+          <a class="nav-link " href="admin_dashboard.php">
+            <i class="bi bi-grid"></i>
+            <span>Dashboard</span>
+          </a>
+        </li><!-- End Dashboard Nav -->
 
-      <li class="nav-item">
+        <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-menu-button-wide"></i><span>Students</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
@@ -111,6 +111,11 @@ $attendanceCount = 4003; // Replace this with your actual query to get attendanc
             </a>
           </li>
           <li>
+            <a href="11_descartes.php">
+              <i class="bi bi-circle"></i><span>11 - Descartes</span>
+            </a>
+            </li>
+          <li>
             <a href="12_alcala.php">
               <i class="bi bi-circle"></i><span>12 - Alcala</span>
             </a>
@@ -127,6 +132,69 @@ $attendanceCount = 4003; // Replace this with your actual query to get attendanc
           </li>
         </ul>
       </li><!-- End Students Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-menu-button-wide"></i><span>Report Card</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="11_stem_1.php">
+              <i class="bi bi-circle"></i><span>11 - STEM (1st Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_stem_2.php">
+              <i class="bi bi-circle"></i><span>11 - STEM (2nd Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_abm_1.php">
+              <i class="bi bi-circle"></i><span>11 -  ABM (1st Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="11_abm_2.php">
+              <i class="bi bi-circle"></i><span>11 -  ABM (2nd Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_stem_1.php">
+              <i class="bi bi-circle"></i><span>12 - STEM (1st Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_stem_2.php">
+              <i class="bi bi-circle"></i><span>12 - STEM (2nd Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_abm_1.php">
+              <i class="bi bi-circle"></i><span>12 -  ABM (1st Sem)</span>
+            </a>
+          </li>
+          <li>
+            <a href="12_abm_2.php">
+              <i class="bi bi-circle"></i><span>12 -  ABM (2st Sem)</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Section Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link" data-bs-target="#icons-nav" href="admin_teachers.php">
+            <i class="bi bi-gem"></i><span>Teachers</span>
+          </a>
+        </li><!-- End Teachers Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link" data-bs-target="#forms-nav" href="admin_logout.php">
+            <i class="bi bi-journal-text"></i><span>Logout</span>
+          </a>
+        </li><!-- End Logout Nav -->
+      </ul>
+
+    </aside><!-- End Sidebar-->
 
       <li class="nav-item">
         <a class="nav-link" data-bs-target="#forms-nav" href="admin_subjects.php">

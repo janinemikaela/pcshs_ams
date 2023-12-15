@@ -109,6 +109,12 @@ if (isset($_SESSION["student_id"])) {
       </li><!-- End QR Code Nav -->
 
       <li class="nav-item">
+        <a class="nav-link" data-bs-target="#icons-nav" href="student_change_pass.php">
+          <i class="bi bi-gem"></i><span>Change Password</span>
+        </a>
+      </li><!-- End Change Password Nav -->
+
+      <li class="nav-item">
         <a class="nav-link" data-bs-target="#forms-nav" href="student_logout.php">
           <i class="bi bi-journal-text"></i><span>Logout</span>
         </a>

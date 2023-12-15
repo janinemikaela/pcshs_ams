@@ -135,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </li><!-- End Subjects Nav -->
 
       <li class="nav-item">
-        <a class="nav-link" data-bs-target="#icons-nav" href="# ">
+        <a class="nav-link" data-bs-target="#icons-nav" href="faculty_change_pass.php">
           <i class="bi bi-gem"></i><span>Change Password</span>
         </a>
       </li><!-- End Teachers Nav -->
@@ -176,16 +176,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <p>Date of birth: <?php echo "$birthday"; ?></p>
                                 <form method="post" action="faculty_profile.php">
                                     <label>Contact no.:</label>
-                                    <input type="text" name="contact_no" value="<?php echo $contact_no; ?>" maxlength="11"><br/><br/>
+                                    <input type="text" name="contact_no" value="<?php echo $contact_no; ?>" maxlength="11" autocomplete="off"><br/><br/>
                                     <label>Email Address:</label>
-                                    <input type="text" name="email" value="<?php echo $email; ?>"><br/><br/>
+                                    <input type="text" name="email" value="<?php echo $email; ?>" autocomplete="off"><br/><br/>
                                     <label>Address:</label>
-                                    <input type="text" name="address" value="<?php echo $address; ?>"><br/><br/>
-                                    <label>Section:</label>
-                                      <select name="section">
-                                        <option value="11 - Archimedes" <?php if($section == '11 - Archimedes') echo 'selected="selected"'; ?>>11 - Archimedes</option>
-                                        <option value="11 - Bernoulli" <?php if($section == '11 - Bernoulli') echo 'selected="selected"'; ?>>11 - Bernoulli</option>
-                                      </select><br/><br/>
+                                    <input type="text" name="address" value="<?php echo $address; ?>" autocomplete="off"><br/><br/>
 
                                     <button type="submit">Update</button>
                                 </form>

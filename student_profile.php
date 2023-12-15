@@ -1,55 +1,98 @@
-<?php
-session_start();
-$db = mysqli_connect("localhost", "root", "", "pcshs");
+  <?php
+  session_start();
+  $db = mysqli_connect("localhost", "root", "", "pcshs");
 
-// Fetch faculty information from the database
-if (isset($_SESSION["student_id"])) {
-    $student_id = $_SESSION['student_id']; // Corrected variable name
-    $query = "SELECT last_name, first_name, middle_name, sex, birthday, contact_no, email, address, section FROM students WHERE student_id = '$student_id'";
-    $result = mysqli_query($db, $query);
+  // Fetch student information from the database
+  if (isset($_SESSION["student_id"])) {
+      $student_id = $_SESSION['student_id'];
+      $query = "SELECT last_name, first_name, middle_name, sex, birthday, contact_no, email, address, section FROM students WHERE student_id = '$student_id'";
+      $result = mysqli_query($db, $query);
 
-    if ($result) {
-        $row = mysqli_fetch_assoc($result);
-        $last_name = strtoupper($row['last_name']);
-        $first_name = strtoupper($row['first_name']);
-        $middle_name = strtoupper($row['middle_name']);
-        $sex = $row['sex'];
-        $birthday = $row['birthday'];
-        $contact_no = $row['contact_no'];
-        $email = $row['email'];
-        $address = $row['address'];
-        $section = $row['section'];
-    } else {
-        // Handle the case where the query fails
-        // You might want to redirect or show an error message
-        echo "Error fetching record: " . mysqli_error($db);
-        exit();
-    }
-} else {
-    header("location:student_login.php");
-    exit();
-}
+      if ($result) {
+          $row = mysqli_fetch_assoc($result);
+          $last_name = strtoupper($row['last_name']);
+          $first_name = strtoupper($row['first_name']);
+          $middle_name = strtoupper($row['middle_name']);
+          $sex = $row['sex'];
+          $birthday = $row['birthday'];
+          $contact_no = $row['contact_no'];
+          $email = $row['email'];
+          $address = $row['address'];
+          $section = $row['section'];
+      } else {
+          echo "Error fetching record: " . mysqli_error($db);
+          exit();
+      }
+  } else {
+      header("location:student_login.php");
+      exit();
+  }
 
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  // Check if the form is submitted
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $contact_no = mysqli_real_escape_string($db, $_POST['contact_no']);
     $email = mysqli_real_escape_string($db, $_POST['email']);
     $address = mysqli_real_escape_string($db, $_POST['address']);
     $section = mysqli_real_escape_string($db, $_POST['section']);
 
-    // Update the database with the new information
-    $update_query = "UPDATE students SET contact_no = '$contact_no', email = '$email', address = '$address', section = '$section' WHERE student_id = '$student_id'";
-    $update_result = mysqli_query($db, $update_query);
+    // Construct the table name based on the selected section
+    $table_name = strtolower($section);
 
-    if ($update_result) {
-        // Redirect back to the profile page
-        header("Location: student_profile.php");
-        exit();
+    // Update the main students table with the new information
+    $update_query_students = "UPDATE students SET contact_no = '$contact_no', email = '$email', address = '$address', section = '$section' WHERE student_id = '$student_id'";
+    $update_result_students = mysqli_query($db, $update_query_students);
+
+    if ($update_result_students) {
+        // Check if the section-specific table exists
+        $check_table_query = "SHOW TABLES LIKE '$table_name'";
+        $check_table_result = mysqli_query($db, $check_table_query);
+
+        if (mysqli_num_rows($check_table_result) > 0) {
+            // If the table exists, update the data
+            $update_section_query = "UPDATE $table_name SET contact_no = '$contact_no', email = '$email', address = '$address' WHERE student_id = '$student_id'";
+            $update_section_result = mysqli_query($db, $update_section_query);
+
+            if ($update_section_result) {
+                // Fetch data from the students table
+                $select_query = "SELECT * FROM students WHERE student_id = '$student_id'";
+                $select_result = mysqli_query($db, $select_query);
+                $student_data = mysqli_fetch_assoc($select_result);
+
+                // Insert data into the section-specific table
+                $insert_section_query = "INSERT INTO $table_name (student_id, last_name, first_name, middle_name, sex, birthday, contact_no, email, address) VALUES ('$student_id', '{$student_data['last_name']}', '{$student_data['first_name']}', '{$student_data['middle_name']}', '{$student_data['sex']}', '{$student_data['birthday']}', '$contact_no', '$email', '$address')";
+                $insert_section_result = mysqli_query($db, $insert_section_query);
+
+                if ($insert_section_result) {
+                    // Redirect back to the profile page
+                    header("Location: student_profile.php");
+                    exit();
+                } else {
+                    $_SESSION['message'] = "Error inserting data into section-specific table: " . mysqli_error($db);
+                }
+            } else {
+                $_SESSION['message'] = "Error updating section-specific data: " . mysqli_error($db);
+            }
+        } else {
+            $_SESSION['message'] = "Error: Section-specific table does not exist.";
+        }
     } else {
-        // Handle the case where the update query fails
-        // You might want to redirect or show an error message
-        echo "Error updating record: " . mysqli_error($db);
+        // Set the error message in the session
+        $_SESSION['message'] = "Error updating main students data: " . mysqli_error($db);
+
+        // Set the session variables with the user-entered data
+        $_SESSION['contact_no_value'] = $contact_no;
+        $_SESSION['email_value'] = $email;
+        $_SESSION['address_value'] = $address;
+        $_SESSION['section_value'] = $section;
     }
+
+    // Open the modal with JavaScript
+    echo '<script language="javascript">';
+    echo 'document.addEventListener("DOMContentLoaded", function() {';
+    echo 'var successModal = document.getElementById("successModal");';
+    echo 'successModal.style.display = "block";';
+    echo '});';
+    echo '</script>';
 }
 ?>
 
@@ -153,6 +196,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </li><!-- End QR Code Nav -->
 
       <li class="nav-item">
+        <a class="nav-link" data-bs-target="#icons-nav" href="student_change_pass.php">
+          <i class="bi bi-gem"></i><span>Change Password</span>
+        </a>
+      </li><!-- End Change Password Nav -->
+
+      <li class="nav-item">
         <a class="nav-link" data-bs-target="#forms-nav" href="student_logout.php">
           <i class="bi bi-journal-text"></i><span>Logout</span>
         </a>
@@ -189,15 +238,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <p>Date of birth: <?php echo "$birthday"; ?></p>
                                 <form method="post" action="student_profile.php">
                                     <label>Contact no.:</label>
-                                    <input type="text" name="contact_no" value="<?php echo $contact_no; ?>" maxlength="13"><br/><br/>
+                                    <input type="text" name="contact_no" value="<?php echo $contact_no; ?>" maxlength="11" autocomplete="off"><br/><br/>
                                     <label>Email Address:</label>
-                                    <input type="text" name="email" value="<?php echo $email; ?>"><br/><br/>
+                                    <input type="text" name="email" value="<?php echo $email; ?>" autocomplete="off"><br/><br/>
                                     <label>Address:</label>
-                                    <input type="text" name="address" value="<?php echo $address; ?>"><br/><br/>
+                                    <input type="text" name="address" value="<?php echo $address; ?>" autocomplete="off"><br/><br/>
                                     <label>Section:</label>
                                       <select name="section">
-                                        <option value="11 - Archimedes" <?php if($section == '11 - Archimedes') echo 'selected="selected"'; ?>>11 - Archimedes</option>
-                                        <option value="11 - Bernoulli" <?php if($section == '11 - Bernoulli') echo 'selected="selected"'; ?>>11 - Bernoulli</option>
+                                        <option value="11_archimedes" <?php if($section == '11_archimedes') echo 'selected="selected"'; ?>>11 - Archimedes</option>
+                                        <option value="11_bernoulli" <?php if($section == '11_bernoulli') echo 'selected="selected"'; ?>>11 - Bernoulli</option>
+                                        <option value="11_curie" <?php if($section == '11_curie') echo 'selected="selected"'; ?>>11 - Curie</option>
+                                        <option value="11_descartes" <?php if($section == '11_descartes') echo 'selected="selected"'; ?>>11 - Descartes</option>
+                                        <option value="11_banatao" <?php if($section == '11_banatao') echo 'selected="selected"'; ?>>11 - Banatao</option>
+                                        <option value="11_ramos" <?php if($section == '11_ramos') echo 'selected="selected"'; ?>>11 - Ramos</option>
+                                        <option value="11_litonjua" <?php if($section == '11_litonjua') echo 'selected="selected"'; ?>>11 - Lintonjua</option>
+                                        <option value="12_alcala" <?php if($section == '12_alcala') echo 'selected="selected"'; ?>>12 - Alcala</option>
+                                        <option value="12_fronda" <?php if($section == '12_fronda') echo 'selected="selected"'; ?>>12 - Fronda</option>
+                                        <option value="12_escuro" <?php if($section == '12_escuro') echo 'selected="selected"'; ?>>12 - Escuro</option>
+                                        <option value="12_del_mundo" <?php if($section == '12_del_mundo') echo 'selected="selected"'; ?>>12 - Del Mundo</option>
+                                        <option value="12_magsaysay" <?php if($section == '12_magsaysay') echo 'selected="selected"'; ?>>12 - Magsaysay</option>
+                                        <option value="12_gandionco" <?php if($section == '12_gandionco') echo 'selected="selected"'; ?>>12 - Gandionco</option>
+                                        <option value="12_sia" <?php if($section == '12_sia') echo 'selected="selected"'; ?>>12 - Sia</option>
                                       </select><br/><br/>
 
                                     <button type="submit">Update</button>

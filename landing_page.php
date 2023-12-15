@@ -46,6 +46,30 @@
         display: inline-block;
         margin: 0 10px; /* Add spacing between buttons */
     }
+
+    .custom-button-admin {
+        background-color: #A2292E; /* Set the color for the Admin button */
+        color: #fff;
+        border: none;
+    }
+
+    .custom-button-student {
+        background-color: #F5B536; /* Set the color for the Student button */
+        color: #fff;
+        border: none;
+    }
+
+    .custom-button-faculty {
+        background-color: #A2292E; /* Set the color for the Faculty button */
+        color: #fff;
+        border: none;
+    }
+
+    .custom-button-attendance {
+        background-color: #F5B536; /* Set the color for the Attendance Personnel button */
+        color: #fff;
+        border: none;
+    }
 </style>
 
 </head>
@@ -65,16 +89,16 @@
                                     <p class="text-center small">Register an Account</p>
                                 </div>
                                 <div class="col-12 mb-3">
-                                        <a class="btn btn-primary w-100" href="admin_login.php">Admin</a>
+                                        <a class="btn btn-danger w-100" href="admin_login.php">Admin</a>
                                     </div>
                                     <div class="col-12 mb-3">
-                                        <a class="btn btn-primary w-100" href="student_register.php">Student</a>
+                                        <a class="btn btn-warning w-100" href="student_register.php">Student</a>
                                     </div>
                                     <div class="col-12 mb-3">
-                                        <a class="btn btn-primary w-100" href="faculty_register.php">Faculty</a>
+                                        <a class="btn btn-danger w-100" href="faculty_register.php">Faculty</a>
                                     </div>
                                     <div class="col-12 mb-3">
-                                        <a class="btn btn-primary w-100" href="ap_verify.php">Attendance Personnel</a>
+                                        <a class="btn btn-warning w-100" href="ap_verify.php">Attendance Personnel</a>
                                     </div>
                                 </div>
                             </div>
