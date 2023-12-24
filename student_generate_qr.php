@@ -1,25 +1,62 @@
 <?php
 session_start();
-// Connect to the database
-$db = mysqli_connect("localhost", "root", "", "pcshs");
+
+// Include your database connection code here
+// Example (replace with your actual database connection code):
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "pcshs";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check if the connection was successful
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 // Check if the user is logged in
 if (isset($_SESSION["student_id"])) {
-    // Fetch student information from the database
     $student_id = $_SESSION['student_id'];
-    $query = "SELECT last_name, first_name, middle_name FROM students WHERE student_id = '$student_id'";
-    $result = mysqli_query($db, $query);
-    
-    // Check if the query was successful
+    $query = "SELECT last_name, first_name, middle_name, sex, birthday, contact_no, email, address, section FROM students WHERE student_id = '$student_id'";
+    $result = mysqli_query($conn, $query); // Use $conn instead of $db
+
     if ($result) {
         $row = mysqli_fetch_assoc($result);
         $last_name = strtoupper($row['last_name']);
         $first_name = strtoupper($row['first_name']);
         $middle_name = strtoupper($row['middle_name']);
+        $sex = $row['sex'];
+        $birthday = $row['birthday'];
+        $contact_no = $row['contact_no'];
+        $email = $row['email'];
+        $address = $row['address'];
+        $section = $row['section'];
     } else {
-        // Handle the case where the query fails
-        // You might want to redirect or show an error message
+        echo "Error fetching record: " . mysqli_error($conn); // Use $conn instead of $db
+        exit();
     }
+} else {
+    header("location:student_login.php");
+    exit();
+}
+
+// Check if the form has been submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve values from the form
+    $last_name = isset($_POST["last_name"]) ? $_POST["last_name"] : "";
+    $student_id = isset($_POST["student_id"]) ? $_POST["student_id"] : "";
+    $birthday = isset($_POST["birthday"]) ? $_POST["birthday"] : "";
+
+    // Use prepared statements to prevent SQL injection
+    $stmt = $conn->prepare("INSERT INTO students (last_name, student_id, birthday) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $last_name, $student_id, $birthday);
+
+    // Execute the statement
+    $stmt->execute();
+}
+
+// Rest of your code
 ?>
 
 <!DOCTYPE html>
@@ -53,7 +90,7 @@ if (isset($_SESSION["student_id"])) {
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.js"></script>
+  <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 
 </head>
 
@@ -194,6 +231,25 @@ if (isset($_SESSION["student_id"])) {
     </div>
   </main><!-- End #main -->
 
+   <script>
+    // Function to generate QR code
+    function generateQRCode() {
+      var lastName = document.getElementById("last_name").value;
+      var studentID = document.getElementById("student_id").value;
+      var birthday = document.getElementById("birthday").value;
+
+      var qrData = `Last Name: ${lastName}\nStudent ID: ${studentID}\nBirthday: ${birthday}`;
+
+      var qr = new QRCode(document.getElementById("qr-code"), {
+        text: qrData,
+        width: 128,
+        height: 128
+      });
+    }
+
+    window.onload = generateQRCode;
+  </script>
+
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
@@ -211,4 +267,3 @@ if (isset($_SESSION["student_id"])) {
 </body>
   
 </html>
-<?php } else {header("location:student_login.php");} ?>

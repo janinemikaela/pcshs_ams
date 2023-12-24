@@ -99,23 +99,54 @@
               <h5 class="card-title"></h5>
 
               <!-- Default Table -->
-                <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>"
-                  onsubmit="return validateForm();">
-                  <table id="subjectTable" class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col"></th>
-                      <th scope="col">Subject</th>
-                      <th scope="col">Teacher</th>
-                      <th scope="col">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" onsubmit="return validateForm();">
+                                        <table id="subjectTable" class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col"></th>
+                                                    <th scope="col">Subject</th>
+                                                    <th scope="col">Teacher</th>
+                                                    <th scope="col">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                // Assuming $studentSection contains the student's section information
+                                                $studentSection = "11_archimedes"; // Replace this with actual section data
 
-                  </tbody>
-                </table>
+                                                // Fetch data based on the student's section
+                                                if ($studentSection == "11_archimedes" || $studentSection == "11_bernoulli") {
+                                                    $table1 = "11_stem_1";
+                                                    $table2 = "11_stem_2";
+                                                } elseif ($studentSection == "11_ramos" || $studentSection == "11_litonjua") {
+                                                    $table1 = "11_abm_1";
+                                                    $table2 = "11_abm_2";
+                                                }
 
-            </form>
+                                                // Assuming $conn is your database connection object
+                                                // Adjust the SQL query based on your actual database schema
+                                                $sql = "SELECT * FROM $table1 UNION SELECT * FROM $table2";
+                                                $result = $conn->query($sql);
+
+                                                if ($result->num_rows > 0) {
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo "<tr>";
+                                                        echo "<td></td>";
+                                                        echo "<td>" . $row["subject"] . "</td>";
+                                                        echo "<td>" . $row["teacher"] . "</td>";
+                                                        echo "<td>Actions</td>";
+                                                        echo "</tr>";
+                                                    }
+                                                } else {
+                                                    echo "<tr><td colspan='4'>No data available</td></tr>";
+                                                }
+
+                                                // Close the database connection
+                                                $conn->close();
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                    </form>
 
 
             

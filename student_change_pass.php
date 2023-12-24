@@ -1,3 +1,75 @@
+<?php
+session_start();
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "pcshs";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$error_message = ""; // Initialize an empty string for error messages
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $currentPassword = md5($_POST['currentPassword']); // Hash input password using MD5
+    $newPassword = $_POST['newPassword'];
+    $confirmPassword = $_POST['confirmPassword'];
+
+    if (isset($_SESSION['student_id'])) {
+        $studentIdParts = explode('-', $_SESSION['student_id']);
+        $student_id = $studentIdParts[0];
+
+        $query = "SELECT password FROM students WHERE student_id = $student_id";
+        $result = $conn->query($query);
+
+        if ($result === FALSE) {
+            $error_message = "Error in SELECT query: " . $conn->error;
+        } else {
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $currentPasswordFromDB = $row['password'];
+
+                if ($currentPassword === $currentPasswordFromDB) {
+                    // Use md5 for hashing
+                    $hashedNewPassword = md5($newPassword);
+
+                    $updateQuery = "UPDATE students SET password = '$hashedNewPassword' WHERE student_id = $student_id";
+                    $updateResult = $conn->query($updateQuery);
+
+                    if ($updateResult === TRUE) {
+                        echo "Password updated successfully!";
+                    } else {
+                        $error_message = "Error updating password: " . $conn->error;
+                        echo $error_message; // Echo the error message for debugging
+                        // Log error information
+                        error_log($error_message);
+                    }
+                } else {
+                    echo "Current password: $currentPassword<br>";
+                    echo "Hashed password from DB: $currentPasswordFromDB<br>";
+                    echo "Password verification result: false<br>";
+                    echo "Current password is incorrect.";
+                }
+            } else {
+                $error_message = "Student not found.";
+            }
+        }
+    } else {
+        $error_message = "Session variable 'student_id' not set.";
+    }
+
+    $conn->close();
+
+    // Echo the error message for debugging
+    echo $error_message;
+}
+?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +110,7 @@
 
 <body>
 
-  <!-- ======= Header ======= -->
+<!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
     <i class="bi bi-list toggle-sidebar-btn"></i>
 
@@ -50,7 +122,7 @@
     </div><!-- End Logo -->
 
   </header><!-- End Header -->
-
+  
   <!-- ======= Sidebar ======= -->
   <aside id="sidebar" class="sidebar">
 
@@ -117,7 +189,7 @@
                     <h5 class="card-title">Change Password</h5>
                   </div>
                   <div class="phppot-container tile-container">
-                    <form name="frmChange" method="post" action="" onSubmit="return validatePassword()">
+                    <form name="frmChange" method="post" action="student_change_pass.php" onSubmit="return validatePassword()">
                       <div class="mb-3">
                         <label for="currentPassword" class="form-label">Current Password*</label>
                         <div class="input-group">
@@ -150,8 +222,8 @@
                       </div>
                       <center>
                         <div class="mb-3">
-                          <input type="submit" name="submit" value="Update Password" class="btn btn-primary">
-                        </div>
+  <button type="submit" name="update_btn" value="Update Password" class="btn btn-primary">Update Password</button>
+</div>
                       </center>
                     </form>
                   </div>
@@ -160,6 +232,11 @@
             </div>
           </div>
         </div>
+        <?php if (!empty($error_message)): ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo $error_message; ?>
+        </div>
+    <?php endif; ?>
       </section>
     </div>
   </main><!-- End #main -->
@@ -180,10 +257,6 @@
   <script src="assets/js/main.js"></script>
 
    <script>
-    $(document).ready(function() {
-      $('#studentsTable').DataTable();
-    });
-
     function togglePassword(elementId) {
       var passwordInput = document.getElementById(elementId);
       var icon = passwordInput.parentElement.querySelector('.toggle-password i');
@@ -198,6 +271,23 @@
       }
     }
   </script>
+  
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="successModalLabel">Success</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Password updated successfully!
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
   
 </body>
 

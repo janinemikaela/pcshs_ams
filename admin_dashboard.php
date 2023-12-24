@@ -196,27 +196,6 @@ $attendanceCount = 4003; // Replace this with your actual query to get attendanc
 
     </aside><!-- End Sidebar-->
 
-      <li class="nav-item">
-        <a class="nav-link" data-bs-target="#forms-nav" href="admin_subjects.php">
-          <i class="bi bi-journal-text"></i><span>Subjects</span>
-        </a>
-      </li><!-- End Subjects Nav -->
-
-      <li class="nav-item">
-        <a class="nav-link" data-bs-target="#icons-nav" href="admin_teachers.php">
-          <i class="bi bi-gem"></i><span>Teachers</span>
-        </a>
-      </li><!-- End Teachers Nav -->
-
-      <li class="nav-item">
-        <a class="nav-link" data-bs-target="#forms-nav" href="admin_logout.php">
-          <i class="bi bi-journal-text"></i><span>Logout</span>
-        </a>
-      </li><!-- End Logout Nav -->
-    </ul>
-
-  </aside><!-- End Sidebar-->
-
   <main id="main" class="main">
 
     <div class="pagetitle">

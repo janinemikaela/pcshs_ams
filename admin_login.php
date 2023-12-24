@@ -1,4 +1,51 @@
-  
+<?php
+session_start();
+if (isset($_SESSION['employee_id'])) {
+    header("location:faculty_profile.php");
+    die();
+}
+
+// Connect to the database
+$db = mysqli_connect("localhost", "root", "", "pcshs");
+
+// Check if the connection was successful
+if (!$db) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
+
+if (isset($_POST['login_btn'])) {
+    $employee_id = mysqli_real_escape_string($db, $_POST['employee_id']);
+    $password = mysqli_real_escape_string($db, $_POST['password']);
+    $hashed_password = md5($password); // Hash the entered password for comparison
+
+    $sql = "SELECT * FROM faculty WHERE employee_id='$employee_id' AND password='$hashed_password'";
+
+    // Debugging messages
+    echo "Before login query<br>";
+    echo "Query: $sql<br>"; // Move this line here
+    echo "Employee ID: $employee_id<br>";
+    echo "Hashed Password: $hashed_password<br>";
+
+    $result = mysqli_query($db, $sql);
+
+    if ($result) {
+        // Debugging message
+        echo "After login query<br>";
+
+        if (mysqli_num_rows($result) >= 1) {
+            $_SESSION['message'] = "You are now Logged In";
+            $_SESSION['employee_id'] = $employee_id;
+            header("location:faculty_profile.php");
+        } else {
+            $_SESSION['message'] = "Username and Password combination incorrect";
+        }
+    } else {
+        // Debugging message
+        echo "Login query failed: " . mysqli_error($db) . "<br>";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -109,14 +156,6 @@
                         this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
                         });
 
-                      const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-                      const confirmPassword = document.getElementById('con_password');
-
-                      toggleConfirmPassword.addEventListener('click', function () {
-                        const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
-                        confirmPassword.setAttribute('type', type);
-                        this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
-                        });
                     </script>
 
                   </form>

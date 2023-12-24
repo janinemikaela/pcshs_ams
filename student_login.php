@@ -1,38 +1,48 @@
 <?php
 session_start();
-if(  isset($_SESSION['student_id']) )
-{
-  header("location:student_home.php");
-  die();
+if (isset($_SESSION['student_id'])) {
+    header("location:student_home.php");
+    die();
 }
-//connect to database
-$db=mysqli_connect("localhost","root","","pcshs");
 
-if($db)
-{
-  if(isset($_POST['login_btn']))
-  {
-      $student_id=mysqli_real_escape_string($db,$_POST['student_id']);
-      $password=mysqli_real_escape_string($db,$_POST['password']);
-      $password=md5($password); //Remember we hashed password before storing last time
-      $sql="SELECT * FROM students WHERE student_id='$student_id' AND password='$password'";
-      $result=mysqli_query($db,$sql);
-      
-      if($result)
-      {
-     
-        if( mysqli_num_rows($result)>=1)
-        {
-            $_SESSION['message']="You are now Loggged In";
-            $_SESSION['student_id']=$student_id;
+// Connect to the database
+$db = mysqli_connect("localhost", "root", "", "pcshs");
+
+// Check if the connection was successful
+if (!$db) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
+
+if (isset($_POST['login_btn'])) {
+    $student_id = mysqli_real_escape_string($db, $_POST['student_id']);
+    $password = mysqli_real_escape_string($db, $_POST['password']);
+    $hashed_password = md5($password); // Hash the entered password for comparison
+
+    $sql = "SELECT * FROM students WHERE student_id='$student_id' AND password='$hashed_password'";
+
+    // Debugging messages
+    echo "Before login query<br>";
+    echo "Query: $sql<br>"; // Move this line here
+    echo "Employee ID: $student_id<br>";
+    echo "Hashed Password: $hashed_password<br>";
+
+    $result = mysqli_query($db, $sql);
+
+    if ($result) {
+        // Debugging message
+        echo "After login query<br>";
+
+        if (mysqli_num_rows($result) >= 1) {
+            $_SESSION['message'] = "You are now Logged In";
+            $_SESSION['student_id'] = $student_id;
             header("location:student_home.php");
+        } else {
+            $_SESSION['message'] = "Username and Password combination incorrect";
         }
-       else
-       {
-              $_SESSION['message']="Student ID and Password combination incorrect";
-       }
-      }
-  }
+    } else {
+        // Debugging message
+        echo "Login query failed: " . mysqli_error($db) . "<br>";
+    }
 }
 ?>
 

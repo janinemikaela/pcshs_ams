@@ -1,74 +1,41 @@
 <?php
-$host = "localhost";
+// Assuming you have a database connection
+$servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "pcshs";
 
-$conn = mysqli_connect($host, $username, $password, $dbname);
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch data from the faculty table
-$facultyQuery = "SELECT * FROM faculty";
-$facultyResult = mysqli_query($conn, $facultyQuery);
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['updateButton'])) {
+    $subjects = $_POST['subject'];
+    $teachers = $_POST['teacher'];
 
-// Fetch data from the subjects table
-$subjectQuery = "SELECT * FROM 11_abm_1";
-$subjectResult = mysqli_query($conn, $subjectQuery);
 
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Check if the form was submitted with data
-    if (!empty($_POST['subject']) && !empty($_POST['teacher'])) {
-        // Loop through the submitted subjects and insert/update them in the database
-        $subjects = $_POST['subject'];
-        $teachers = $_POST['teacher'];
+    // Assuming you have a table named '11_abm_1' with columns 'subject' and 'teacher'
+    $tableName = "11_abm_1";
 
-        foreach ($subjects as $key => $subject) {
-            $teacher = mysqli_real_escape_string($conn, $teachers[$key]);
+    // Clear existing data in the table
+    $conn->query("TRUNCATE TABLE $tableName");
 
-            // Assuming 'teacher_id' is the correct column name in the '11_abm_1' table
-            $insertQuery = "INSERT INTO 11_abm_1 (subject, teacher) VALUES (?, ?)
-                            ON DUPLICATE KEY UPDATE teacher = VALUES(teacher)";
+    // Insert new data into the table
+    for ($i = 0; $i < count($subjects); $i++) {
+        $subject = $conn->real_escape_string($subjects[$i]);
+        $teacher = $conn->real_escape_string($teachers[$i]);
 
-            $stmt = mysqli_prepare($conn, $insertQuery);
-            mysqli_stmt_bind_param($stmt, "ss", $subject, $teacher);
-            mysqli_stmt_execute($stmt);
-        }
-
-        echo "Subjects saved successfully!";
-    } else {
-        // Check if there are rows to delete
-        if (!empty($_POST['delete'])) {
-            $deleteSubjects = $_POST['delete'];
-
-            // Delete selected rows from the database
-            foreach ($deleteSubjects as $subject) {
-                $deleteQuery = "DELETE FROM 11_abm_1 WHERE subject = ?";
-                $stmt = mysqli_prepare($conn, $deleteQuery);
-                mysqli_stmt_bind_param($stmt, "s", $subject);
-                mysqli_stmt_execute($stmt);
-            }
-
-            echo "Selected subjects deleted successfully!";
-        } else {
-            echo "No data submitted.";
-        }
+        $sql = "INSERT INTO $tableName (subject, teacher) VALUES ('$subject', '$teacher')";
+        $conn->query($sql);
     }
+
+    echo "Data updated successfully!";
 }
 
-// Fetch all faculty data into an array
-$facultyData = [];
-while ($facultyRow = mysqli_fetch_assoc($facultyResult)) {
-    $facultyData[] = $facultyRow;
-}
-
-// Fetch all subjects data into an array
-$subjectData = [];
-while ($subjectRow = mysqli_fetch_assoc($subjectResult)) {
-    $subjectData[] = $subjectRow;
-}
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -262,152 +229,50 @@ while ($subjectRow = mysqli_fetch_assoc($subjectResult)) {
               <h5 class="card-title">11 - ABM (First Semester)</h5>
 
               <!-- Default Table -->
-                <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>"
-                  onsubmit="return validateForm();">
-                  <table id="subjectTable" class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col"></th>
-                      <th scope="col">Subject</th>
-                      <th scope="col">Teacher</th>
-                      <th scope="col">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  <?php
-                  $count = 1;
-                  foreach ($subjectData as $row) {
-                    echo "<tr>";
-                    echo "<th scope='row'>" . $count . "</th>";
-                    echo "<td><input type='text' name='subject[]' value='" . htmlspecialchars($row['subject']) . "'></td>";
-                    echo "<td><select name='teacher[]'>";
-                  foreach ($facultyData as $facultyRow) {
-                    $fullName = $facultyRow['first_name'] . ' ' . $facultyRow['last_name'];
-                    $selected = ($fullName == $row['teacher']) ? 'selected' : '';
-                    echo "<option value='{$fullName}' $selected>{$fullName}</option>";
-                                                    }
-                    echo "</select></td>";
-                    echo "<td><button type='button' class='bi bi-trash-fill' onclick='deleteRow(this)'></button></td>";
-                    echo "<td><input type='hidden' name='hidden_subject[]' value='{$row['subject']}'></td>";
-                    echo "<td><input type='hidden' name='hidden_teacher[]' value='{$row['teacher']}'></td>";
-                    echo "</tr>";
-                    $count++;
-                    }
-                    ?>
-                  </tbody>
-                </table>
+                <form method="post" action="11_abm_1.php" onsubmit="return validateForm();">
+    <table id="subjectTable" class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Subject</th>
+                <th scope="col">Teacher</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php for ($i = 0; $i < 8; $i++) { ?>
+                <tr>
+                    <td><?php echo $i + 1; ?></td>
+                    <td>
+                        <select name="subject[<?php echo $i; ?>]" class="custom-dropdown">
+    <option value="" <?php if(isset($_POST['subject'][$i]) && $_POST['subject'][$i] == '') echo 'selected'; ?>></option>
+    <option value="Math" <?php if(isset($_POST['subject'][$i]) && $_POST['subject'][$i] == 'Math') echo 'selected'; ?>>Math</option>
+    <option value="Science" <?php if(isset($_POST['subject'][$i]) && $_POST['subject'][$i] == 'Science') echo 'selected'; ?>>Science</option>
+    <option value="English" <?php if(isset($_POST['subject'][$i]) && $_POST['subject'][$i] == 'English') echo 'selected'; ?>>English</option>
+     <option value="Filipino" <?php if(isset($_POST['subject'][$i]) && $_POST['subject'][$i] == 'Filipino') echo 'selected'; ?>>Filipino</option>
+    <!-- Add more subjects as needed -->
+</select>
 
-              <div class="text-end">
-                <button type="button" class="btn btn-primary" onclick="addSubjectRow(event)">Add</button>
-                <button type="submit" class="btn btn-success" id="saveButton">Save</button>
-              </div>
-            </form>
+                    </td>
+                    <td>
+                        <select name="teacher[<?php echo $i; ?>]" class="custom-dropdown">
+    <option value="" <?php if(isset($_POST['teacher'][$i]) && $_POST['teacher'][$i] == '') echo 'selected'; ?>></option>
+    <option value="Mr. Smith" <?php if(isset($_POST['teacher'][$i]) && $_POST['teacher'][$i] == 'Mr. Smith') echo 'selected'; ?>>Mr. Smith</option>
+    <option value="Ms. Johnson" <?php if(isset($_POST['teacher'][$i]) && $_POST['teacher'][$i] == 'Ms. Johnson') echo 'selected'; ?>>Ms. Johnson</option>
+    <option value="Dr. Brown" <?php if(isset($_POST['teacher'][$i]) && $_POST['teacher'][$i] == 'Dr. Brown') echo 'selected'; ?>>Dr. Brown</option>
+    <!-- Add more teachers as needed -->
+</select>
+                    </td>
+                </tr>
+            <?php } ?>
+        </tbody>
+    </table>
 
+    <div class="text-end">
+        <button type="submit" class="btn btn-warning" name="updateButton">Update</button>
+    </div>
+</form>
 
-            <script>
-              var facultyData = <?php echo json_encode($facultyData); ?>;
-              var formSubmitting = false; // Flag to track form submission status
-
-              // Function to initialize the table with the first row
-              function initializeTable() {
-                var table = document.getElementById("subjectTable");
-                var rowCount = table.rows.length;
-
-              // Add the first row if the table is empty
-              if (rowCount === 0) {
-                addSubjectRow();
-              }
-              }
-
-              // JavaScript function to add a new row with empty values
-              function addSubjectRow() {
-                var table = document.getElementById("subjectTable");
-                var rowCount = table.rows.length;
-
-                var row = table.insertRow(rowCount);
-                var cell1 = row.insertCell(0);
-                var cell2 = row.insertCell(1);
-                var cell3 = row.insertCell(2);
-
-                cell1.textContent = rowCount;
-
-                cell2.innerHTML = "<input type='text' name='subject[]' value=''>";
-
-                // Fetch faculty data for the dropdown
-                var facultyDropdown = "<select name='teacher[]'>";
-                for (var i = 0; i < facultyData.length; i++) {
-                  var fullName = facultyData[i]['first_name'] + ' ' + facultyData[i]['last_name'];
-                  facultyDropdown += "<option value='" + fullName + "'>" + fullName + "</option>";
-                }
-                facultyDropdown += "</select>";
-
-                cell3.innerHTML = facultyDropdown;
-
-                // Re-enable the Save button after adding the row
-                document.getElementById("saveButton").disabled = false;
-                }
-
-                // Function to check if a row is empty
-                function isEmptyRow(rowIndex) {
-                var table = document.getElementById("subjectTable");
-                var cells = table.rows[rowIndex].cells;
-                for (var i = 0; i < cells.length; i++) {
-                  var inputElement = cells[i].querySelector('input');
-                  if (inputElement && inputElement.value.trim() !== '') {
-                    return false;
-                  }
-                }
-                  return true;
-                }
-
-                // Validation function to check if any required fields are empty
-                function validateForm() {
-                var subjects = document.getElementsByName('subject[]');
-                var teachers = document.getElementsByName('teacher[]');
-
-                for (var i = 0; i < subjects.length; i++) {
-                  if (subjects[i].value.trim() === '' || teachers[i].value.trim() === '') {
-                  alert('Please fill in all fields before saving.');
-                  return false; // Prevent form submission
-                  }
-                }
-
-                  return true; // Allow form submission
-                }
-
-                function deleteRow(btn) {
-                  console.log("Delete button clicked!");
-                  var row = btn.parentNode.parentNode;
-                  var subject = row.querySelector("input[name='subject[]']").value; // Get the subject to delete
-
-                  // Check if the subject has an associated database entry
-                  if (subject.trim() !== '') {
-                    // Send an AJAX request to delete the subject from the database
-                    var xhr = new XMLHttpRequest();
-                    xhr.onreadystatechange = function () {
-                      if (xhr.readyState == 4 && xhr.status == 200) {
-                        var response = JSON.parse(xhr.responseText);
-                        if (response.success) {
-                          // On success, remove the UI row
-                          row.parentNode.removeChild(row);
-                        } else {
-                          // On failure, alert the user or handle the error appropriately
-                          alert('Failed to delete the subject.');
-                        }
-                     }
-                  };
-                  xhr.open("POST", "delete_abm111.php", true); // Point to delete.php
-                  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                  xhr.send("delete[]=" + encodeURIComponent(subject));
-                  } else {
-                    // If the subject is empty, remove the UI row without making a database request
-                    row.parentNode.removeChild(row);
-                  }
-                  }
-
-                // Call the initializeTable function when the page loads
-                window.onload = initializeTable;
-            </script>
+            
             </div>
           </div>
         </div>
@@ -421,16 +286,6 @@ while ($subjectRow = mysqli_fetch_assoc($subjectResult)) {
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-    <script>
-      var facultyData = <?php echo json_encode($facultyData); ?>;
-    </script>
-
-    <script>
-        tinymce.init({
-            selector: 'textarea',  // Specify the textarea or element ID where you want TinyMCE
-            // Other TinyMCE configuration options...
-        });
-    </script>
 
     <!-- Vendor JS Files -->
     <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>

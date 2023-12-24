@@ -111,25 +111,47 @@ if (isset($_POST['register_btn'])) {
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
 
+  <style>
+         body {
+        background-image: url("assets/img/pcshs_school.png");
+    background-size: cover;
+    background-position: center;
+    margin: 0;
+    padding: 0;
+  }
+
+    .card {
+        height: 100vh;
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+    </style>
+
 </head>
 
 <body style="background-color:#800000">
 
   <main>
-    <div class="container">
+    <div class="container-fluid">
+            <div class="row">
 
-      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
-        <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-lg-6 col-md-6 d-flex flex-column align-items-center justify-content-center">
+                <!-- Left side content (with an image) -->
+                <div class="col-lg-6 d-none d-lg-block">
+                </div>
 
-              <div class="card mb-3">
-
-                <div class="card-body">
+                <!-- Right side content -->
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
 
                   <div class="pt-4 pb-2">
-                    <h1 class="card-title text-center pb-0 fs-4">PCSHS</h1>
-                    <p class="text-center small">Register an Account</p>
+                    <h1 class="card-title text-center pb-0 fs-4">PCSHS - Student</h1>
+                    <p class="text-center small">Register an Account</p><br/>
                   </div>
 
                   <form method="post" action="student_register.php" class="row g-3" onsubmit="return validatePassword()">
@@ -137,12 +159,12 @@ if (isset($_POST['register_btn'])) {
                       <div class="col-12">
                       </div>
                       <div class="col-4">
-                        <label><b>Last Name*</label></b>
+                        <label><b>Last Name <span style="color: red;">*</span></b></label>
                         <input type="text" name="last_name" class="form-control" id="last_name" placeholder="Dela Cruz" required pattern="[A-Za-z\s]+" style="text-transform: capitalize;" autocomplete="off" title="It should not contain special characters and numbers.">
                         <div class="invalid-feedback">Please, enter your Last Name!</div>
                       </div>
                       <div class="col-4">
-                        <label><b>First Name*</label></b>
+                        <label><b>First Name <span style="color: red;">*</span></label></b>
                         <input type="text" name="first_name" class="form-control" id="first_name" placeholder="Juan" required pattern="[A-Za-z\s]+" style="text-transform: capitalize;" autocomplete="off" title="It should not contain special characters and numbers.">
                         <div class="invalid-feedback">Please, enter your First Name!</div>
                       </div>
@@ -154,13 +176,13 @@ if (isset($_POST['register_btn'])) {
                     </div>
 
                     <div class="col-lg-6">
-                      <label><b>Birthday*</label></b>
+                      <label><b>Birthday <span style="color: red;">*</span></label></b>
                       <input type="date" name="birthday" class="form-control" placeholder="Birthday" id="birthday" required>
                       <div class="invalid-feedback">Please enter your birthday!</div>
                     </div>
 
                     <div class="col-lg-6">
-                      <label><b>Sex*</label></b>
+                      <label><b>Sex <span style="color: red;">*</span></label></b>
                       <select name="sex" class="form-select" id="sex" required>
                         <option value="" disabled selected>Select</option>
                         <option value="Male">Male</option>
@@ -170,13 +192,13 @@ if (isset($_POST['register_btn'])) {
                     </div>
 
                     <div class="col-4">
-                      <label><b>Student ID*</label></b>
+                      <label><b>Student ID <span style="color: red;">*</span></label></b>
                       <input type="text" name="student_id" class="form-control" placeholder="XXX-XXXXXXX-XXXX" id="student_id" pattern="^\d{3}-student-\d{4}$" required title="Please enter a valid Student ID in the format: 001-student-2023" autocomplete="off" maxlength="16">
                       <div class="invalid-feedback">Please enter a valid Student ID!</div>
                     </div>
 
                     <div class="col-4">
-                      <label><b>Password*</label></b>
+                      <label><b>Password <span style="color: red;">*</span></label></b>
                       <div class="input-group">
                         <input type="password" name="password" class="form-control" id="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*_?&])[A-Za-z\d@$!%*_?&]{10}$" title="Password must be exactly 10 characters long, contain one uppercase, one lowercase, a special character, and a number" required>
                         <button class="btn btn-outline-secondary" type="button" id="togglePassword"><i class="bi bi-eye"></i></button>
@@ -185,7 +207,7 @@ if (isset($_POST['register_btn'])) {
                     </div>
 
                     <div class="col-4">
-                      <label><b>ConfirmPassword*</label></b>
+                      <label><b>Confirm Password <span style="color: red;">*</span></label></b>
                       <div class="input-group">
                         <input type="password" name="con_password" class="form-control" id="con_password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*_?&])[A-Za-z\d@$!%*_?&]{10}$" title="Password must be exactly 10 characters long, contain one uppercase, one lowercase, a special character, and a number" required>
                         <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword"><i class="bi bi-eye"></i></button>
@@ -199,7 +221,7 @@ if (isset($_POST['register_btn'])) {
                       <button class="btn btn-primary w-100" type="submit" name="register_btn">Create Account</button>
                     </div>
                     <div class="col-12">
-                      <p class="small mb-0">Already have an account? <a href="student_login.php">Log in</a></p>
+                      <p class="small mb-0">Already have an account? <a href="faculty_login.php">Log in</a></p>
                     </div>
 
                     <div id="errorModal" class="modal">
@@ -254,12 +276,6 @@ if (isset($_POST['register_btn'])) {
 
                   </form>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </section>
 
     </div>
   </main><!-- End #main -->

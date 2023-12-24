@@ -1,67 +1,75 @@
 <?php
-// Include your database connection file here
-include 'dbConnection.php';
 session_start();
 
-$db = mysqli_connect($databaseHost, $databaseUsername, $databasePassword, $databaseName);
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "pcshs";
 
-// Fetch faculty information from the database
-if (isset($_SESSION["employee_id"])) {
-    $employee_id = $_SESSION['employee_id'];
-    $query = "SELECT last_name, first_name, middle_name, sex, birthday, contact_no, email, address, section, password FROM faculty WHERE employee_id = '$employee_id'";
-    $result = mysqli_query($db, $query);
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-    if ($result) {
-        $row = mysqli_fetch_assoc($result);
-        $last_name = strtoupper($row['last_name']);
-        $first_name = strtoupper($row['first_name']);
-        $middle_name = strtoupper($row['middle_name']);
-        $sex = $row['sex'];
-        $birthday = $row['birthday'];
-        $contact_no = $row['contact_no'];
-        $email = $row['email'];
-        $address = $row['address'];
-        $section = $row['section'];
-        $storedPassword = $row['password'];
-    } else {
-        // Handle the case where the query fails
-        echo "Error fetching record: " . mysqli_error($db);
-        exit();
-    }
-} else {
-    header("location:faculty_login.php");
-    exit();
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
-    $currentPassword = mysqli_real_escape_string($db, $_POST['currentPassword']);
-    $newPassword = mysqli_real_escape_string($db, $_POST['newPassword']);
-    $confirmPassword = mysqli_real_escape_string($db, $_POST['confirmPassword']);
+$error_message = ""; // Initialize an empty string for error messages
 
-    // Check if the entered current password matches the stored password
-    if (password_verify($currentPassword, $storedPassword)) {
-        // Hash the new password
-        $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $currentPassword = md5($_POST['currentPassword']); // Hash input password using MD5
+    $newPassword = $_POST['newPassword'];
+    $confirmPassword = $_POST['confirmPassword'];
 
-        // Update the password in the database
-        $updatePasswordQuery = "UPDATE faculty SET password = '$hashedNewPassword' WHERE employee_id = '$employee_id'";
-        $updatePasswordResult = mysqli_query($db, $updatePasswordQuery);
+    if (isset($_SESSION['employee_id'])) {
+        $employeeIdParts = explode('-', $_SESSION['employee_id']);
+        $employee_id = $employeeIdParts[0];
 
-        if ($updatePasswordResult) {
-            // Password changed successfully
-            $_SESSION['message'] = "Password changed successfully!";
+        $query = "SELECT password FROM faculty WHERE employee_id = $employee_id";
+        $result = $conn->query($query);
+
+        if ($result === FALSE) {
+            $error_message = "Error in SELECT query: " . $conn->error;
         } else {
-            // Handle the case where updating the password fails
-            $_SESSION['message'] = "Failed to change password. Please try again.";
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $currentPasswordFromDB = $row['password'];
+
+                if ($currentPassword === $currentPasswordFromDB) {
+                    // Use md5 for hashing
+                    $hashedNewPassword = md5($newPassword);
+
+                    $updateQuery = "UPDATE faculty SET password = '$hashedNewPassword' WHERE employee_id = $employee_id";
+                    $updateResult = $conn->query($updateQuery);
+
+                    if ($updateResult === TRUE) {
+                        echo "Password updated successfully!";
+                    } else {
+                        $error_message = "Error updating password: " . $conn->error;
+                        echo $error_message; // Echo the error message for debugging
+                        // Log error information
+                        error_log($error_message);
+                    }
+                } else {
+                    echo "Current password: $currentPassword<br>";
+                    echo "Hashed password from DB: $currentPasswordFromDB<br>";
+                    echo "Password verification result: false<br>";
+                    echo "Current password is incorrect.";
+                }
+            } else {
+                $error_message = "Faculty not found.";
+            }
         }
     } else {
-        // Display an error message for incorrect current password
-        $_SESSION['message'] = "Incorrect current password.";
-        // You might want to redirect or display the message as needed
+        $error_message = "Session variable 'employee_id' not set.";
     }
+
+    $conn->close();
+
+    // Echo the error message for debugging
+    echo $error_message;
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -102,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 
 <body>
 
-  <!-- ======= Header ======= -->
+<!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
     <i class="bi bi-list toggle-sidebar-btn"></i>
 
@@ -160,7 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                     <h5 class="card-title">Change Password</h5>
                   </div>
                   <div class="phppot-container tile-container">
-                    <form name="frmChange" method="post" action="" onSubmit="return validatePassword()">
+                    <form name="frmChange" method="post" action="faculty_change_pass.php" onSubmit="return validatePassword()">
                       <div class="mb-3">
                         <label for="currentPassword" class="form-label">Current Password*</label>
                         <div class="input-group">
@@ -193,8 +201,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                       </div>
                       <center>
                         <div class="mb-3">
-                          <input type="submit" name="submit" value="Update Password" class="btn btn-primary">
-                        </div>
+  <button type="submit" name="update_btn" value="Update Password" class="btn btn-primary">Update Password</button>
+</div>
                       </center>
                     </form>
                   </div>
@@ -203,9 +211,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             </div>
           </div>
         </div>
+        <?php if (!empty($error_message)): ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo $error_message; ?>
+        </div>
+    <?php endif; ?>
       </section>
     </div>
   </main><!-- End #main -->
+
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -223,25 +237,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
   <script src="assets/js/main.js"></script>
 
    <script>
-    $(document).ready(function() {
-      $('#studentsTable').DataTable();
-    });
-
     function togglePassword(elementId) {
-      var passwordInput = document.getElementById(elementId);
-      var icon = passwordInput.parentElement.querySelector('.toggle-password i');
-      if (passwordInput.type === "password") {
-        passwordInput.type = "text";
-        icon.classList.remove('bi-eye');
-        icon.classList.add('bi-eye-slash');
-      } else {
-        passwordInput.type = "password";
-        icon.classList.remove('bi-eye-slash');
-        icon.classList.add('bi-eye');
-      }
-    }
+  console.log("Toggle function called"); // Check if the function is called
+  var passwordInput = document.getElementById(elementId);
+  var icon = passwordInput.parentElement.querySelector('.toggle-password i');
+  if (passwordInput.type === "password") {
+    passwordInput.type = "text";
+    icon.classList.remove('bi-eye');
+    icon.classList.add('bi-eye-slash');
+  } else {
+    passwordInput.type = "password";
+    icon.classList.remove('bi-eye-slash');
+    icon.classList.add('bi-eye');
+  }
+}
   </script>
   
+
 </body>
 
 </html>

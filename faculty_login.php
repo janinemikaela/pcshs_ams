@@ -1,50 +1,47 @@
 <?php
 session_start();
+if (isset($_SESSION['employee_id'])) {
+    header("location:faculty_profile.php");
+    die();
+}
 
 // Connect to the database
 $db = mysqli_connect("localhost", "root", "", "pcshs");
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
 
-// Check if the form is submitted
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Check if the form is submitted with the login_btn
-    if (isset($_POST['login_btn'])) {
-        // Get user input from the submitted form
-        $employee_id = mysqli_real_escape_string($db, $_POST['employee_id']);
-        $password = mysqli_real_escape_string($db, $_POST['password']);
+// Check if the connection was successful
+if (!$db) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
 
-        // Query to check if the user exists in the database
-        $query = "SELECT * FROM faculty WHERE employee_id = '$employee_id'";
-        $result = mysqli_query($db, $query);
+if (isset($_POST['login_btn'])) {
+    $employee_id = mysqli_real_escape_string($db, $_POST['employee_id']);
+    $password = mysqli_real_escape_string($db, $_POST['password']);
+    $hashed_password = md5($password); // Hash the entered password for comparison
 
-        // Check if a matching faculty user is found
-        if ($result && mysqli_num_rows($result) > 0) {
-            // Fetch user data from the result
-            $user = mysqli_fetch_assoc($result);
+    $sql = "SELECT * FROM faculty WHERE employee_id='$employee_id' AND password='$hashed_password'";
 
-            // Verify password
-            if (password_verify($password, $user['password'])) {
-                // Set session variables for faculty
-                $_SESSION['employee_id'] = $user['employee_id'];
-                $_SESSION['last_name'] = $user['last_name'];
-                $_SESSION['first_name'] = $user['first_name'];
-                $_SESSION['middle_name'] = $user['middle_name'];
-                $_SESSION['sex'] = $user['sex'];
-                $_SESSION['birthday'] = $user['birthday'];
-                $_SESSION['contact_no'] = $user['contact_no'];
+    // Debugging messages
+    echo "Before login query<br>";
+    echo "Query: $sql<br>"; // Move this line here
+    echo "Employee ID: $employee_id<br>";
+    echo "Hashed Password: $hashed_password<br>";
 
-                // Redirect to the faculty profile page
-                header("Location: faculty_profile.php");
-                exit();
-            } else {
-                // Invalid password, show an error message
-                $errorMessage = "Invalid Password";
-            }
+    $result = mysqli_query($db, $sql);
+
+    if ($result) {
+        // Debugging message
+        echo "After login query<br>";
+
+        if (mysqli_num_rows($result) >= 1) {
+            $_SESSION['message'] = "You are now Logged In";
+            $_SESSION['employee_id'] = $employee_id;
+            header("location:faculty_profile.php");
         } else {
-            // Invalid employee_id, show an error message
-            $errorMessage = "Invalid Employee ID";
+            $_SESSION['message'] = "Username and Password combination incorrect";
         }
+    } else {
+        // Debugging message
+        echo "Login query failed: " . mysqli_error($db) . "<br>";
     }
 }
 ?>
@@ -86,6 +83,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   <main>
     <div class="container">
+       <?php
+    if(isset($_SESSION['message']))
+    {
+         echo "<div id='error_msg'>".$_SESSION['message']."</div>";
+         unset($_SESSION['message']);
+    }
+    ?>
 
       <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
         <div class="container">
@@ -101,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <p class="text-center small">Faculty Module</p>
                   </div>
 
-                  <form method="post" action="faculty_login.php" class="row g-3 needs-validation" novalidate>
+                  <form method="post" action="" class="row g-3 needs-validation" novalidate>
 
                     <div class="col-12">
                       <input type="text" name="employee_id" class="form-control" placeholder="XXX-XXXXXXX-XXXX" id="employee_id" pattern="^\d{3}-faculty-\d{4}$" required title="Please enter a valid Employee ID in the format: 001-faculty-2023" autocomplete="off" maxlength="16">
@@ -140,14 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
                         });
 
-                      const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-                      const confirmPassword = document.getElementById('con_password');
-
-                      toggleConfirmPassword.addEventListener('click', function () {
-                        const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
-                        confirmPassword.setAttribute('type', type);
-                        this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
-                        });
                     </script>
                     
                   </form>
@@ -178,14 +174,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
-
-   <?php
-    if(isset($_SESSION['message']))
-    {
-         echo "<div id='error_msg'>".$_SESSION['message']."</div>";
-         unset($_SESSION['message']);
-    }
-    ?>
 
 </body>
 
